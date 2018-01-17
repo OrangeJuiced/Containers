@@ -24,6 +24,7 @@ fi
 STEAMDIR=/home/container/steamcmd
 #The folder where steamcmd downloads the mods and lists them named by their mod id
 STEAMMODDIR=/home/container/steamapps/workshop/content/346110
+GAMEMODDIR=/home/container/ShooterGame/Content/Mods
 #The ARK root directory
 GAMEDIR=/home/container
 #The full path to the GameUserSettings.ini
@@ -135,10 +136,10 @@ doExtractMod(){
 
 changes=0
 
-modcheckbefore=$(ls -l -t "$STEAMMODDIR")
 activemods=$(dos2unix -q $BASECONFIG && cat $BASECONFIG | grep "ActiveMods=" | cut -d "=" -f 2 | sed 's/,$//' | xargs -d ',' -n1 echo)
 modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 346110)
-modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER $STEAMPW +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
+modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
+modcheckbefore=$(ls -l -t "$GAMEMODDIR")
 modcheckafter=$(ls -l -t "$STEAMMODDIR")
 
 if [[ "$modcheckbefore" != "$modcheckafter" ]]; then
