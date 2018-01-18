@@ -10,11 +10,8 @@ if [ ! -z ${SRCDS_APPID} ]; then
 fi
 
 # -----------------------------------------------------------------------------
-#
 # This Script the ARK server mods listed in gameusersettings.ini
-#
 # -----------------------------------------------------------------------------
-#
 # Dependencies:
 # bash, grep, xargs, sed, cat, echo, dos2unix, perl, zlib1g-dev
 
@@ -135,18 +132,18 @@ if [ -z "$activemods" ]
 then
       echo "No mods found in configuration"
 else
-      echo "Mods found"
-      echo "Starting update process"
+      echo "Mods found in configuration"
+      echo "Starting mod installation process"
       modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 346110)
       modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
 
       echo "Cleaning up mods from game mod directory"
       rm $GAMEDIR/ShooterGame/Content/Mods/* -r
-      echo "Install updated or new mods"
+      echo "Installing mods"
       for modid in $activemods; do
               doExtractMod $modid
       done
-      echo "Mod update process completed at: $(date)"
+      echo "Mod installation process completed at: $(date)"
 fi
 
 echo "Starting server"
