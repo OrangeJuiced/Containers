@@ -16,7 +16,6 @@ fi
 # -----------------------------------------------------------------------------
 #
 # Dependencies:
-#
 # bash, grep, xargs, sed, cat, echo, dos2unix, perl, zlib1g-dev
 
 #Required folders
@@ -24,17 +23,13 @@ fi
 STEAMDIR=/home/container/steamcmd
 #The folder where steamcmd downloads the mods and lists them named by their mod id
 STEAMMODDIR=/home/container/steamapps/workshop/content/346110
-GAMEMODDIR=/home/container/ShooterGame/Content/Mods
 #The ARK root directory
 GAMEDIR=/home/container
 #The full path to the GameUserSettings.ini
 BASECONFIG=$GAMEDIR/ShooterGame/Saved/Config/LinuxServer/GameUserSettings.ini
 
 #Steam user
-#No explination needed
 STEAMUSER="anonymous"
-
-###############################################################################
 
 doExtractMod(){
   local modid=$1
@@ -53,7 +48,7 @@ doExtractMod(){
   fi
 
   if [ -f "$modsrcdir/mod.info" ]; then
-    echo "Copying mod files to $moddestdir"
+    echo -e "\nCopying mod files to $moddestdir"
 
     if [ -f "$modsrcdir/${modbranch}NoEditor/mod.info" ]; then
       modsrcdir="$modsrcdir/${modbranch}NoEditor"
@@ -134,31 +129,27 @@ doExtractMod(){
   fi
 }
 
-changes=0
-
 activemods=$(dos2unix -q $BASECONFIG && cat $BASECONFIG | grep "ActiveMods=" | cut -d "=" -f 2 | sed 's/,$//' | xargs -d ',' -n1 echo)
-modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 346110)
-modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
-modcheckbefore=$(ls -l -t "$GAMEMODDIR")
-modcheckafter=$(ls -l -t "$STEAMMODDIR")
 
-if [[ "$modcheckbefore" != "$modcheckafter" ]]; then
-        changes=1
-        echo "Cleaning up mods from game mod directory"
-        rm $GAMEDIR/ShooterGame/Content/Mods/* -r
-        echo "Install updated or new mods"
-        for modid in $activemods; do
-                doExtractMod $modid
-        done
-fi
-        echo "ARK mods update check performed at: $(date)"
-
-if (("$changes" > 0)); then
-        echo "ARK mods were updated successfully"
+if [ -z "$activemods" ]
+then
+      echo "No mods found in configuration"
 else
-        echo "No mod updates required"
+      echo "Mods found"
+      echo "Starting update process"
+      modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 346110)
+      modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
+
+      echo "Cleaning up mods from game mod directory"
+      rm $GAMEDIR/ShooterGame/Content/Mods/* -r
+      echo "Install updated or new mods"
+      for modid in $activemods; do
+              doExtractMod $modid
+      done
+      echo "Mod update process completed at: $(date)"
 fi
-echo "Starting server.."
+
+echo "Starting server"
 
 # Replace Startup Variables
 MODIFIED_STARTUP=`eval echo $(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
