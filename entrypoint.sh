@@ -137,10 +137,10 @@ else
       modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 346110)
       modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
 
-      echo "Cleaning up mods from game mod directory"
-      rm $GAMEDIR/ShooterGame/Content/Mods/* -r
       echo "Installing mods"
       for modid in $activemods; do
+              rm $GAMEDIR/ShooterGame/Content/Mods/$modid -r
+              rm $GAMEDIR/ShooterGame/Content/Mods/$modid.mod          
               doExtractMod $modid
       done
       echo "Mod installation process completed at: $(date)"
