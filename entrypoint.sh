@@ -4,13 +4,11 @@ cd /home/container
 # Make internal Docker IP address available to processes.
 export INTERNAL_IP=`ip route get 1 | awk '{print $NF;exit}'`
 
-# Update Source Server
-if [ ! -z ${SRCDS_APPID} ]; then
-    ./steamcmd/steamcmd.sh +login anonymous +force_install_dir /home/container +app_update ${SRCDS_APPID} +quit
-fi
+# Update ARK Server
+./steamcmd/steamcmd.sh +login anonymous +force_install_dir /home/container +app_update 376030 +quit
 
 # -----------------------------------------------------------------------------
-# This Script the ARK server mods listed in gameusersettings.ini
+# This Script installs the ARK server mods listed in gameusersettings.ini
 # -----------------------------------------------------------------------------
 # Dependencies:
 # bash, grep, xargs, sed, cat, echo, dos2unix, perl, zlib1g-dev
