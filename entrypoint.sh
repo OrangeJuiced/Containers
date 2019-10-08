@@ -5,7 +5,7 @@ cd /home/container
 export INTERNAL_IP=`ip route get 1 | awk '{print $NF;exit}'`
 
 # Update ARK Server
-./steamcmd/steamcmd.sh +login anonymous +force_install_dir /home/container +app_update 376030 +quit
+./steamcmd/steamcmd.sh -tcp +login anonymous +force_install_dir /home/container +app_update 376030 +quit
 
 # -----------------------------------------------------------------------------
 # This Script installs the ARK server mods listed in gameusersettings.ini
