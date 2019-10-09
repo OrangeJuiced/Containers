@@ -5,7 +5,7 @@ cd /home/container
 export INTERNAL_IP=`ip route get 1 | awk '{print $NF;exit}'`
 
 # Update ARK Server
-./steamcmd/steamcmd.sh -tcp +login anonymous +force_install_dir /home/container +app_update 376030 +quit
+./steamcmd/steamcmd.sh +login anonymous +force_install_dir /home/container +app_update 376030 +quit
 
 # -----------------------------------------------------------------------------
 # This Script installs the ARK server mods listed in gameusersettings.ini
@@ -17,7 +17,7 @@ export INTERNAL_IP=`ip route get 1 | awk '{print $NF;exit}'`
 #The folder where steamcmd.sh is located
 STEAMDIR=/home/container/steamcmd
 #The folder where steamcmd downloads the mods and lists them named by their mod id
-STEAMMODDIR=/home/container/steamapps/workshop/content/376030
+STEAMMODDIR=/home/container/steamapps/workshop/content/346110
 #The ARK root directory
 GAMEDIR=/home/container
 #The full path to the GameUserSettings.ini
@@ -132,7 +132,7 @@ then
 else
       echo "Mods found in configuration"
       echo "Starting mod installation process"
-      modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 376030)
+      modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 346110)
       modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
 
       echo "Installing mods"
