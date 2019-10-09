@@ -4,8 +4,19 @@ cd /home/container
 # Make internal Docker IP address available to processes.
 export INTERNAL_IP=`ip route get 1 | awk '{print $NF;exit}'`
 
+# Delete Steam Cache Files
+rm -rf ./Steam/appcache
+rm -rf ./Steam/depotcache
+rm -rf ./steamapps/appmanifest_376030.acf
+
 # Update ARK Server
+echo -e "\nUpdating server"
 ./steamcmd/steamcmd.sh +login anonymous +force_install_dir /home/container +app_update 376030 +quit
+
+# Delete Steam Cache Files again
+rm -rf ./Steam/appcache
+rm -rf ./Steam/depotcache
+rm -rf ./steamapps/appmanifest_376030.acf
 
 # -----------------------------------------------------------------------------
 # This Script installs the ARK server mods listed in gameusersettings.ini
@@ -128,23 +139,24 @@ activemods=$(dos2unix -q $BASECONFIG && cat $BASECONFIG | grep "ActiveMods=" | c
 
 if [ -z "$activemods" ]
 then
-      echo "No mods found in configuration"
+      echo -e "\nNo mods found in configuration"
 else
-      echo "Mods found in configuration"
-      echo "Starting mod installation process"
+      echo -e "\nMods found in configuration"
+      echo -e "\nCleaning up mod directory"
+      rm $GAMEDIR/ShooterGame/Content/Mods/*
+
+      echo -e "\nStarting mod installation process"
       modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 346110)
       modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
 
       echo "Installing mods"
       for modid in $activemods; do
-              rm $GAMEDIR/ShooterGame/Content/Mods/$modid -r
-              rm $GAMEDIR/ShooterGame/Content/Mods/$modid.mod          
-              doExtractMod $modid
+          doExtractMod $modid
       done
-      echo "Mod installation process completed at: $(date)"
+      echo -e "\nMod installation process completed at: $(date)"
 fi
 
-echo "Starting server"
+echo -e "\nStarting server"
 
 # Replace Startup Variables
 MODIFIED_STARTUP=`eval echo $(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
