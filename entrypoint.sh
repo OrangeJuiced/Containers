@@ -10,7 +10,7 @@ rm -rf ./steam/depotcache
 rm -rf ./steamapps/appmanifest_258550.acf
 
 # Update Rust Server
-./steam/steamcmd.sh +login anonymous +force_install_dir /home/container +app_update 258550 +quit
+./steam/steamcmd.sh +login anonymous +force_install_dir /home/container +app_update 258550 -beta aux01 +quit
 
 # Replace Startup Variables
 MODIFIED_STARTUP=`eval echo $(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
