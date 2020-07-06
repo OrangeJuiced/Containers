@@ -135,7 +135,7 @@ doExtractMod(){
   fi
 }
 
-activemods=$(dos2unix -q $BASECONFIG && cat $BASECONFIG | grep "ActiveMods=" | cut -d "=" -f 2 | sed 's/,$//' | xargs -d ',' -n1 echo)
+activemods=$(dos2unix -q $BASECONFIG && cat $BASECONFIG | grep "\bActiveMods=" | cut -d "=" -f 2 | sed 's/,$//' | xargs -d ',' -n1 echo)
 
 if [ -z "$activemods" ]
 then
@@ -143,17 +143,13 @@ then
 else
       echo -e "\nMods found in configuration"
       
-      echo -e "Mod IDs found: $activemods"
+      echo -e "Mod IDs found: \n$activemods"
 
       echo -e "\nStarting mod installation"
       modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 346110)
       modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
 
-      for modid in $activemods; do
-          if [ $modid = "True" ]; then
-            continue
-          fi
-      
+      for modid in $activemods; do     
           rm $GAMEDIR/ShooterGame/Content/Mods/$modid -r
           rm $GAMEDIR/ShooterGame/Content/Mods/$modid.mod          
           doExtractMod $modid
