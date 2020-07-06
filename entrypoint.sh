@@ -142,12 +142,18 @@ then
       echo -e "\nNo mods found in configuration"
 else
       echo -e "\nMods found in configuration"
+      
+      echo -e "Mod IDs found: $activemods"
 
       echo -e "\nStarting mod installation"
       modupdatelist=$(echo $activemods | xargs -n1 echo +workshop_download_item 346110)
       modupdates=$($STEAMDIR/steamcmd.sh +login $STEAMUSER +force_install_dir $GAMEDIR $modupdatelist +quit | tee /dev/tty)
 
       for modid in $activemods; do
+          if [ $modid = "True" ]; then
+            continue
+          fi
+      
           rm $GAMEDIR/ShooterGame/Content/Mods/$modid -r
           rm $GAMEDIR/ShooterGame/Content/Mods/$modid.mod          
           doExtractMod $modid
